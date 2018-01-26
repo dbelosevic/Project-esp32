@@ -2,6 +2,8 @@
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
+#include <Stdlib.h>
+#include <Stdio.h>
 
 
 
@@ -9,7 +11,7 @@ BLECharacteristic *pCharacteristic;
 bool deviceConnected = false;
 BLEServer *pServer;
 BLEScan* pBLEScan;
-int scanTime = 15;
+int a;
 BLEScanResults foundDevices;
 
 // See the following for generating UUIDs:
@@ -25,9 +27,22 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if (value.length() > 0) {
         Serial.println("*********");
         Serial.print("Nova vrijednost: ");
-        for (int i = 0; i < value.length(); i++)
+        for (int i = 0; i < value.length(); i++){
           Serial.print(value[i]);
-
+          a=value[i]%2;
+          if(a==0){  //LED3 blinka ako je ascii kod paran
+            digitalWrite(18,HIGH);
+            delay(500);
+            digitalWrite(18,LOW);
+            delay(250);
+          }
+          else{  //LED4 blinka ako je ascii kod neparanparan
+            digitalWrite(19,HIGH);
+            delay(500);
+            digitalWrite(19,LOW);
+            delay(250);
+          }
+        }
         Serial.println();
         Serial.println("*********");
       }
@@ -54,7 +69,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
 void BLEServerSetup(void){
 
     Serial.println("\n1- Downloadaj i instaliraj BLE scanner  aplikaciju na mobitel");
-    Serial.println("2- Traži BLE uređaje u aplikaciji");
+    Serial.println("2- TraĹľi BLE ureÄ‘aje u aplikaciji");
     Serial.println("3- Spoji se na MyESP32");
     Serial.println("4- Idi na CUSTOM CHARACTERISTIC u CUSTOM SERVICE , odaberi 'w' i napisi nesto");
   
@@ -90,6 +105,8 @@ void setup() {
   Serial.begin(9600);
   pinMode(2,OUTPUT);
   pinMode(5,OUTPUT);
+  pinMode(18,OUTPUT);
+  pinMode(19,OUTPUT);
   digitalWrite(5,HIGH);
 
   BLEServerSetup();
