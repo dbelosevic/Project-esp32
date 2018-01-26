@@ -2,11 +2,11 @@
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
-#include <WiFi.h>
+//#include <WiFi.h>
 
-const char* ssid     = "Danijel"; //vlastiti ssid
+/*const char* ssid     = "Danijel"; //vlastiti ssid
 const char* password = "12345678";//lozinka
-WiFiServer server(80);
+WiFiServer server(80);*/
 
 
 BLECharacteristic *pCharacteristic;
@@ -22,6 +22,21 @@ BLEScanResults foundDevices;
 #define SERVICE_UUID        "8dd905df-e461-47a4-b69c-44e8f3f1ce1f"
 #define CHARACTERISTIC_UUID "0e6b976b-7ae6-49fd-9d36-f12f5cf9520f"
 
+class MyCallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      std::string value = pCharacteristic->getValue();
+
+      if (value.length() > 0) {
+        Serial.println("*********");
+        Serial.print("Nova vrijednost: ");
+        for (int i = 0; i < value.length(); i++)
+          Serial.print(value[i]);
+
+        Serial.println();
+        Serial.println("*********");
+      }
+    }
+};
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
@@ -33,22 +48,31 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
-void WiFiLocalWebPageCtrl(void);
-void connectWiFi(void);
+//void WiFiLocalWebPageCtrl(void);
+//void connectWiFi(void);
 
-void BLEScaning(void){
+/*void BLEScaning(void){
   
   pBLEScan->setActiveScan(true); 
   foundDevices = pBLEScan->start(scanTime);
   Serial.print("Broj uređaja: ");
   Serial.println(foundDevices.getCount());
   Serial.println("Skeniranje završeno!");
-}
+}*/
 
 void BLEServerSetup(void){
+
+    Serial.println("1- Download and install an BLE scanner app in your phone");
+    Serial.println("2- Scan for BLE devices in the app");
+    Serial.println("3- Connect to MyESP32");
+    Serial.println("4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something");
+    Serial.println("5- See the magic =)");
+
+    BLEDevice::init("MyESP32");
+
     // Stvori BLE posluzitelj
     pServer = BLEDevice::createServer();
-    pServer->setCallbacks(new MyServerCallbacks());
+    //pServer->setCallbacks(new MyServerCallbacks());
 
     // Stvori BLE uslugu
     BLEService *pService = pServer->createService(SERVICE_UUID);
@@ -60,11 +84,14 @@ void BLEServerSetup(void){
                         BLECharacteristic::PROPERTY_WRITE  
                         );
 
+   pCharacteristic->setCallbacks(new MyCallbacks());
+   pCharacteristic->setValue("Hello World");
   // Zapocni uslugu
   pService->start();
 
   // Zapocni odasiljanje
-  pServer->getAdvertising()->start();
+  BLEAdvertising* pAdvertising = pServer->getAdvertising();
+  pAdvertising->start();
   Serial.println("Spreman za spajanje :)");
 }
 
@@ -75,14 +102,14 @@ void setup() {
 
 
   // Stvori BLE uredaj
-  BLEDevice::init("MyESP32");
-  pBLEScan = BLEDevice::getScan(); 
+  //BLEDevice::init("MyESP32");
+  //pBLEScan = BLEDevice::getScan(); 
   BLEServerSetup();
-  connectWiFi();
+  //connectWiFi();
 }
 
 void loop() {
-
+    
  // kad je bluetooth uredaj spojen upali LED na pinu 2 i ugasi LED na vratima 5
   if(deviceConnected){ 
     digitalWrite(5, LOW); 
@@ -90,12 +117,12 @@ void loop() {
   }
   else {digitalWrite(2,LOW); digitalWrite(5,HIGH);}
   delay(2000);
-  WiFiLocalWebPageCtrl();
+  //WiFiLocalWebPageCtrl();
 }
 
 
 
-void WiFiLocalWebPageCtrl(void)
+/*void WiFiLocalWebPageCtrl(void)
 {
   WiFiClient client = server.available();  
   
@@ -153,4 +180,4 @@ void connectWiFi(void)
   Serial.println(WiFi.localIP());
   
   server.begin();
-}
+}*/
