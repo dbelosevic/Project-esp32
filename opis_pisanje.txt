@@ -1,4 +1,4 @@
 ﻿ESP32 modul stvara BLE poslužitelj.
 LED dioda na pinu 5 počinje odmah svjetliti, nisu spojeni uređaji na bluetooth.
-Kada se bluetooth uređaj spoji na modul onda se upali LED dioda na pinu 2. Treba se spojiti preko aplikacije "BLE Scanner" tvrtke "BLUEPIXEL TECHNOLOGIES LLP"
-LED3 žmiga ako je ascii kod znaka paran, a LED4 ako je neparan
+Kada se bluetooth uređaj spoji na modul onda se upali LED dioda na pinu 2. Treba se spojiti preko aplikacije "BLE Scanner" tvrtke "BLUEPIXEL TECHNOLOGIES LLP".
+LED3 žmiga ako je ascii kod znaka paran, a LED4 ako je neparan.
